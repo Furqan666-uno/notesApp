@@ -14,7 +14,7 @@ const Register= () => {
     
     const handleSubmit = async e => {
     e.preventDefault()
-    registerUser(email, username, password, password2)
+    registerUser(username, email, password, password2)
     }
 
   return (
