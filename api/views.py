@@ -80,3 +80,16 @@ def notes_delete(request, pk):
         note.delete()
         return Response({"message": "Note is deleted."}, status=status.HTTP_204_NO_CONTENT)
 
+
+@api_view(['PUT'])
+@permission_classes([permissions.IsAuthenticated])
+def update_note(request, pk):
+    if request.method=='PUT':
+        note= Notes.objects.get(pk=pk, author= request.user)
+        update_note= NotesSerializer(note, data= request.data)
+        if update_note.is_valid():
+            update_note.save()
+            return Response(update_note.data, status=status.HTTP_200_OK)
+        return Response({'message':"Can't be updated."}, status=status.HTTP_400_BAD_REQUEST)
+
+

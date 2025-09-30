@@ -7,6 +7,7 @@ const Home = ({createdNote}) => {
   const [notes, setNotes]= useState([])
   const [content, setContent]= useState("")
   const [title, setTitle]= useState("")
+  const [editingNote, setEditingNoteId] = useState(null);
 
   useEffect(() => {
     document.title = "Home | My App";
@@ -84,6 +85,43 @@ const Home = ({createdNote}) => {
       catch (error) {
         console.error("Something wennt wrong. Error:", error)
       }
+  }
+
+  const updateNotes= async (id)=> {
+    const authToken = localStorage.getItem('authToken');
+    const authData = JSON.parse(authToken);
+    const accessToken = authData.access
+
+    try {
+      const update= await fetch(`${baseURL}/update/${id}/`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${accessToken}`
+        },
+        body: JSON.stringify({title, content})
+      })
+
+      const data= await update.json()
+
+      if (update.status===200) {
+        console.log("Note updated: ", data)
+        setNotes((prevNote)=> prevNote.map((note)=> note.id===id ? data : note))
+        setTitle("")
+        setContent("")
+        deleteNotes((note)=> note.id)
+        alert("Note updated successfully.")
+      }
+
+      else {
+        console.error("Error:", data);
+        alert("Failed to update note.");
+      }
+    }
+
+    catch(error) {
+      console.error("Something wennt wrong. Error:", error)
+    } 
   }
 
   const deleteNotes= async (id)=> {
@@ -184,11 +222,28 @@ const Home = ({createdNote}) => {
                                             className="btn btn-danger btn-sm ms-3 flex-shrink-0 rounded-pill"
                                             title="Delete Note"
                                         >
+
                                             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" className="bi bi-trash" viewBox="0 0 16 16">
                                                 <path d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0V6z"/>
                                                 <path fillRule="evenodd" d="M14.5 3a1 1 0 0 1-1 1H13V3a1 1 0 0 0-1-1H4a1 1 0 0 0-1 1v1H1.5a1 1 0 0 1 0-2h13a1 1 0 0 1 1 1v1zM11 2H5a1 1 0 0 0-1 1v1h8V3a1 1 0 0 0-1-1zM2 5v10a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2V5H2z"/>
                                             </svg>
                                         </button>
+                                        
+                                          <button
+                                              onClick={() => {
+                                                
+                                                setEditingNoteId(note.id)
+                                                setTitle(note.title)
+                                                setContent(note.content)
+                                              }}
+                                              
+                                              className="btn btn-warning btn-sm ms-3 flex-shrink-0 rounded-pill"
+                                              title="Edit Note"
+                                          >
+                                            Edit
+                                          </button>
+                                        
+
                                     </div>
                                 ))}
                             </div>

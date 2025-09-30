@@ -52,14 +52,16 @@ export const AuthProcess= ({all_data})=> {
             body: JSON.stringify({username, email, password, password2})
         })
 
+        const data = await new_user.json();
+
         if (new_user.status===201) {
             console.log('registered')
             next_page('/login')
         }
 
         else {
-            console.log(new_user.error)
-            alert("Something went wrong.", new_user.status)
+            console.log("Error: ", data)
+            alert("Something went wrong.", data.message)
         }
     }
 
