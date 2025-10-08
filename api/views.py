@@ -4,7 +4,6 @@ from rest_framework_simplejwt.tokens import RefreshToken
 from rest_framework import generics, serializers, permissions, status
 from rest_framework.decorators import api_view, permission_classes
 from .serializers import RegisterSerializer, LoginSerializer, NotesSerializer
-from rest_framework import status
 from rest_framework.views import APIView
 from django.contrib.auth import get_user_model, authenticate
 from .models import Notes
